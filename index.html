@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Неправильные глаголы</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eef5;--grid:#d3dcea;--ink:#16233b;--mute:#5d6b84;--card:#fffef9;--line:#e4ddc8;--red:#d9534f;--ok:#1f8a5b;--no:#c2410c;--btn:#16233b;--btnt:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--grid:#1a2438;--ink:#e8edf7;--mute:#97a4bd;--card:#1b2538;--line:#2b3750;--red:#ef7a76;--ok:#4ed19a;--no:#ff9a62;--btn:#e8edf7;--btnt:#0f1624;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1624;--grid:#1a2438;--ink:#e8edf7;--mute:#97a4bd;--card:#1b2538;--line:#2b3750;--red:#ef7a76;--ok:#4ed19a;--no:#ff9a62;--btn:#e8edf7;--btnt:#0f1624;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.5 "Golos Text",system-ui,sans-serif}
+main{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:24px;margin:4px 0 14px;line-height:1.2}
+h2{margin:0 0 10px;font-size:18px}
+small,.note{color:var(--mute);font-size:14px}
+.note{margin:10px 0}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #3a7bff;outline-offset:2px}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.top{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.pct{font-size:44px;font-weight:700;line-height:1;min-width:92px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.meta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:14px;margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 16px;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:10px;font:inherit;font-weight:500;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--btn);color:var(--btnt)}
+.big,.ghost{padding:14px;border-radius:10px;border:2px solid var(--ink);font:inherit;font-weight:700;cursor:pointer;background:var(--btn);color:var(--btnt);width:100%}
+.ghost{background:transparent;color:var(--ink)}
+button:disabled{opacity:.4;cursor:default}
+.act{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:4px}
+summary{font-weight:700;cursor:pointer;padding:2px 0}
+details[open] summary{margin-bottom:10px}
+input[type=search],.fld input{width:100%;padding:10px;border:1.5px solid var(--mute);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.tools{display:flex;gap:16px}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;font:inherit;cursor:pointer;padding:6px 0}
+#list{max-height:340px;overflow:auto;margin:6px 0 12px;border-top:1px solid var(--line)}
+.pick{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.pick input{width:20px;height:20px;flex:none}
+.pick span{flex:1;font-size:15px}
+.pick em{color:var(--mute);font-style:normal}
+.mk{color:var(--ok);font-style:normal;font-weight:700}
+.paper{position:relative;background:var(--card);border:1px solid var(--line);border-radius:6px;box-shadow:0 2px 0 var(--line);padding:22px 20px 18px 44px;margin-bottom:14px}
+.paper::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;background:var(--red);opacity:.7}
+.inf{font-size:clamp(26px,8vw,36px);font-weight:700;line-height:1.2;overflow-wrap:anywhere}
+.paper .sub{color:var(--mute);margin-top:6px}
+.r{margin-top:12px}
+.r small{display:block}
+.r span{font-size:20px;font-weight:500;overflow-wrap:anywhere}
+.fld{margin-bottom:12px}
+.fld:last-child{margin-bottom:0}
+.fld label{display:block;font-size:14px;color:var(--mute);margin-bottom:4px}
+.fld input.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--bg))}
+.fld input.bad{border-color:var(--no);background:color-mix(in srgb,var(--no) 14%,var(--bg))}
+.fix{color:var(--no);font-weight:500;font-size:15px;margin-top:2px}
+.miss{padding:10px 0;border-top:1px solid var(--line)}
+.miss:first-of-type{border-top:0}
+.miss .you{color:var(--mute);font-size:14px}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var KEY="verbs-v3",LEARN=2;
+var RAW=`be|was/were|been|быть, являться|bo‘lmoq, borbo‘lmoq
+beat|beat|beaten|побить, побеждать|urmoq, g‘alaba qozonmoq
+become|became|become|становиться|bo‘lmoq
+begin|began|begun|начинать|boshlamoq
+bite|bit|bitten|кусать|tishlamoq
+blow|blew|blown|дуть|esmoq
+break|broke|broken|ломать, разбивать|sindirmoq
+bring|brought|brought|приносить|olib kelmoq
+build|built|built|строить|qurmoq
+burn|burnt|burnt|гореть|yonmoq
+buy|bought|bought|покупать|sotib olmoq
+can|could|—|мочь, уметь|qodir bo‘lmoq
+catch|caught|caught|ловить|tutmoq
+choose|chose|chosen|выбирать|tanlamoq
+come|came|come|приходить, приезжать|kelmoq
+cost|cost|cost|стоить|narxi turmoq
+cut|cut|cut|резать|kesmoq
+deal|dealt|dealt|иметь дело с|ish olib bormoq
+do|did|done|делать|bajarmoq
+draw|drew|drawn|рисовать|chizmoq
+dream|dreamt/dreamed|dreamt/dreamed|мечтать, сниться|orzu qilmoq, tushko‘rmoq
+drink|drank|drunk|пить|ichmoq
+drive|drove|driven|водить (машину)|haydamoq
+eat|ate|eaten|есть, кушать|yemoq
+fall|fell|fallen|падать|qulamoq
+feel|felt|felt|чувствовать|his qilmoq
+fight|fought|fought|бороться, драться|jang qilmoq, urushmoq
+find|found|found|находить|topmoq
+fly|flew|flown|летать|uchmoq
+forget|forgot|forgotten|забывать|unutmoq
+forgive|forgave|forgiven|прощать|kechirmoq
+freeze|froze|frozen|замерзать|muzlamoq
+get|got|got|получать, добираться|olmoq, yetib kelmoq
+give|gave|given|давать|bermoq
+go|went|gone|идти, ехать|bormoq, yurmoq
+grow|grew|grown|расти, выращивать|o‘smoq
+have|had|had|иметь|egalik qilmoq
+hear|heard|heard|слышать|eshitmoq
+hide|hid|hidden|прятать(ся)|berkinmoq
+hit|hit|hit|ударить|urmoq
+hold|held|held|держать|ushlab turmoq
+keep|kept|kept|хранить|saqlamoq
+know|knew|known|знать|bilmoq
+lead|led|led|вести|yetaklamoq
+learn|learnt/learned|learnt/learned|учить|o‘rganmoq
+leave|left|left|уходить, покидать, оставлять|jo‘nab ketmoq, unutib qoldirmoq
+lend|lent|lent|одалживать (кому-то)|qarz bermoq
+let|let|let|позволять, разрешать|izn bermoq
+lie|lay|lain|лежать|yotmoq
+lose|lost|lost|терять, проигрывать|yo‘qotmoq, yutqazmoq
+make|made|made|делать, создавать|yaratmoq, yasamoq
+mean|meant|meant|значить, иметь в виду|anglatmoq, nazarda tutmoq
+meet|met|met|встречать|uchrashmoq
+pay|paid|paid|платить|to‘lamoq
+put|put|put|класть|qo‘ymoq
+read|read /red/|read /red/|читать|o‘qimoq
+ride|rode|ridden|ездить верхом|minmoq
+ring|rang|rung|звонить, звенеть|qo‘ng‘iroq qilmoq
+rise|rose|risen|восходить, подниматься|ko‘tarilmoq
+run|ran|run|бегать|yugurmoq
+say|said|said|сказать, говорить|aytmoq
+see|saw|seen|видеть|ko‘rmoq
+sell|sold|sold|продавать|sotmoq
+send|sent|sent|отправлять|jo‘natmoq
+set|set|set|устанавливать|o‘rnatmoq
+shake|shook|shaken|трясти, пожать руку|titramoq, qo‘l berib ko‘rishmoq
+shine|shone|shone|сиять, светить|yarqiramoq
+show|showed|shown|показывать|ko‘rsatmoq
+shut|shut|shut|закрывать, запирать|yopmoq
+sing|sang|sung|петь|kuylamoq
+sink|sank|sunk|тонуть|cho‘kmoq
+sit|sat|sat|сидеть|o‘tirmoq
+sleep|slept|slept|спать|uxlamoq
+smell|smelt|smelt|пахнуть, нюхать|hidlamoq
+speak|spoke|spoken|говорить|gapirmoq
+spend|spent|spent|тратить, проводить (время)|sarflamoq, vaqt o‘tkazmoq
+spell|spelt/spelled|spelt/spelled|писать/произносить по буквам|harflab yozmoq/aytmoq
+stand|stood|stood|стоять|turmoq
+steal|stole|stolen|красть|o‘g‘irlamoq
+swim|swam|swum|плавать|suzmoq
+take|took|taken|брать, забирать|olmoq, olib ketmoq
+teach|taught|taught|преподавать, учить|o‘qitmoq
+tell|told|told|рассказывать|aytib bermoq
+think|thought|thought|думать|o‘ylamoq
+throw|threw|thrown|бросать|uloqtirmoq
+understand|understood|understood|понимать|tushunmoq
+wake|woke|woken|просыпаться, будить|uyg‘onmoq, uyg‘otmoq
+wear|wore|worn|носить (одежду)|kiymoq
+win|won|won|выигрывать|g‘olib chiqmoq, yutmoq
+write|wrote|written|писать|yozmoq`;
+var SAMPLE=RAW.split("\n").map(function(l){var p=l.split("|");return{t:p[0],f:p[1]+" · "+p[2],r:p[3],u:p[4],b:0}});
+var V=SAMPLE;V.forEach(function(c){var a=c.f.split(" · ");c.v2=a[0];c.v3=a[1]});
+var P=(function(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}})();
+function saveP(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}}
+var app=document.getElementById("app"),N=10,SEL={},S=null;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function st(c){return P[c.t]||0}
+function pctBlock(){var L=V.filter(function(c){return st(c)>=LEARN}).length,p=Math.round(L/V.length*100);return'<div class="sec top"><div class="pct">'+p+'%</div><div><b>Выучено '+L+' из '+V.length+'</b><br><small>Глагол считается выученным после двух верных проверок подряд</small></div></div><div class="bar"><i style="width:'+p+'%"></i></div>'}
+function nsel(){return Object.keys(SEL).filter(function(k){return SEL[k]}).length}
+function home(){
+  S=null;
+  var chips=[5,10,20,30,V.length].map(function(n){return'<button class="chip" data-n="'+n+'" aria-pressed="'+(N===n)+'">'+(n===V.length?'Все':n)+'</button>'}).join("");
+  var list=V.map(function(c,i){return'<label class="pick"><input type="checkbox" data-i="'+i+'"'+(SEL[i]?' checked':'')+'><span><b>'+esc(c.t)+'</b> <em>'+esc(c.r)+'</em></span>'+(st(c)>=LEARN?'<i class="mk">✓</i>':'')+'</label>'}).join("");
+  app.innerHTML='<h1>Неправильные глаголы</h1>'+pctBlock()+
+  '<div class="sec"><h2>Сколько глаголов учить</h2><div class="chips">'+chips+'</div><p class="note">Сначала берутся глаголы, которые ещё не выучены.</p><button class="big" id="go">Начать занятие</button></div>'+
+  '<details class="sec"><summary>Выбрать глаголы самому</summary><input id="q" type="search" placeholder="Найти глагол" aria-label="Найти глагол"><div class="tools"><button class="link" id="all">Выбрать все</button><button class="link" id="none">Сбросить</button></div><div id="list">'+list+'</div><button class="big" id="gosel"></button></details>';
+  function upd(){var n=nsel();$("gosel").textContent="Учить выбранные ("+n+")";$("gosel").disabled=!n}
+  upd();
+  app.querySelectorAll(".chip").forEach(function(b){b.onclick=function(){N=+b.dataset.n;app.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===b)})}});
+  $("go").onclick=function(){var u=shuffle(V.filter(function(c){return st(c)<LEARN})),l=shuffle(V.filter(function(c){return st(c)>=LEARN}));start(u.concat(l).slice(0,N))};
+  $("list").onchange=function(e){SEL[e.target.dataset.i]=e.target.checked;upd()};
+  $("q").oninput=function(){var q=this.value.trim().toLowerCase();app.querySelectorAll(".pick").forEach(function(l){l.hidden=q&&l.textContent.toLowerCase().indexOf(q)<0})};
+  function setAll(v){app.querySelectorAll(".pick").forEach(function(l){if(l.hidden)return;var c=l.querySelector("input");c.checked=v;SEL[c.dataset.i]=v});upd()}
+  $("all").onclick=function(){setAll(true)};$("none").onclick=function(){setAll(false)};
+  $("gosel").onclick=function(){start(V.filter(function(c,i){return SEL[i]}))};
+}
+function start(l){S={l:shuffle(l),i:0,ph:"learn",res:[]};render()}
+function render(){S.ph==="learn"?learn():S.ph==="test"?test():result();window.scrollTo(0,0)}
+function hdr(t){var n=S.l.length;return'<div class="meta"><span>'+t+' · '+(S.i+1)+' из '+n+'</span><button class="link" id="ex">Выйти</button></div><div class="bar"><i style="width:'+((S.i+1)/n*100)+'%"></i></div>'}
+function row(l,v){return'<div class="r"><small>'+l+'</small><span>'+esc(v)+'</span></div>'}
+function learn(){
+  var c=S.l[S.i],last=S.i===S.l.length-1;
+  app.innerHTML=hdr("Знакомство")+'<div class="paper"><div class="inf">'+esc(c.t)+'</div>'+row("Past Simple",c.v2)+row("Past Participle",c.v3)+row("Русский",c.r)+row("Узбекский",c.u)+'</div><div class="act"><button class="ghost" id="bk"'+(S.i?'':' disabled')+'>Назад</button><button class="big" id="nx">'+(last?'К проверке':'Дальше')+'</button></div>';
+  $("ex").onclick=home;
+  $("bk").onclick=function(){S.i--;render()};
+  $("nx").onclick=function(){if(last){S.ph="test";S.l=shuffle(S.l);S.i=0;S.res=[]}else S.i++;render()};
+}
+function match(v,e){v=v.toLowerCase().replace(/\s+/g," ").trim();var b=e.replace(/\s+\/[^\/]*\/\s*$/,"").toLowerCase();return b.split("/").some(function(x){return x.trim()===v})||b.replace(/\s/g,"")===v.replace(/\s/g,"")}
+function test(){
+  var c=S.l[S.i],last=S.i===S.l.length-1,exp=[c.t,c.v2,c.v3],labs=["Infinitive","Past Simple","Past Participle"],done=false;
+  var f=labs.map(function(l,k){return'<div class="fld"><label for="f'+k+'">'+l+'</label><input id="f'+k+'"'+(exp[k]==="—"?' value="—" disabled':'')+' autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"><div class="fix" id="x'+k+'"></div></div>'}).join("");
+  app.innerHTML=hdr("Проверка")+'<div class="paper"><div class="inf">'+esc(c.r)+'</div><div class="sub">'+esc(c.u)+'</div></div><div class="sec">'+f+'</div><button class="big" id="ck">Проверить</button>';
+  $("ex").onclick=home;
+  function check(){
+    var ans=[],ok=[];
+    exp.forEach(function(e,k){var el=$("f"+k),v=el.value.trim(),g=e==="—"||match(v,e);ans.push(v);ok.push(g);el.className=g?"ok":"bad";el.readOnly=true;if(!g)$("x"+k).textContent="Верно: "+e});
+    S.res.push({c:c,ans:ans,all:ok.every(Boolean)});
+    done=true;$("ck").textContent=last?"Показать результат":"Дальше";$("ck").onclick=next;$("ck").focus();
+  }
+  function next(){if(last){S.res.forEach(function(r){P[r.c.t]=r.all?(P[r.c.t]||0)+1:0});saveP();S.ph="result"}else S.i++;render()}
+  $("ck").onclick=check;
+  [0,1,2].forEach(function(k){$("f"+k).onkeydown=function(e){if(e.key!=="Enter")return;e.preventDefault();if(done)return next();var n=k+1;while(n<3&&$("f"+n).disabled)n++;n<3?$("f"+n).focus():check()}});
+  $("f0").focus();
+}
+function result(){
+  var r=S.res,g=r.filter(function(x){return x.all}),bad=r.filter(function(x){return!x.all}),p=Math.round(g.length/r.length*100);
+  var list=bad.map(function(x){return'<div class="miss"><b>'+esc(x.c.t)+'</b> — '+esc(x.c.r)+'<div>Верно: '+esc(x.c.t)+' · '+esc(x.c.f)+'</div><div class="you">Вы ответили: '+x.ans.map(function(a){return esc(a||"—")}).join(" · ")+'</div></div>'}).join("");
+  app.innerHTML='<h1>Занятие завершено</h1><div class="sec top"><div class="pct">'+p+'%</div><div><b>Верно '+g.length+' из '+r.length+'</b><br><small>Глагол засчитан, если верны все три формы</small></div></div><div class="bar"><i style="width:'+p+'%"></i></div>'+
+  (bad.length?'<div class="sec"><h2>Над чем поработать</h2>'+list+'</div>':'<div class="sec"><h2>Без ошибок</h2></div>')+
+  '<h2>Общий прогресс</h2>'+pctBlock()+(bad.length?'<button class="big" id="rp" style="margin-bottom:10px">Повторить ошибки</button>':'')+'<button class="ghost" id="hm">На главную</button>';
+  $("hm").onclick=home;
+  if(bad.length)$("rp").onclick=function(){start(bad.map(function(x){return x.c}))};
+}
+home();
+</script>
+</body>
+</html>
