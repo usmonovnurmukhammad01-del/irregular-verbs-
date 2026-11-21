@@ -67,6 +67,15 @@ input[type=search],.fld input{width:100%;padding:10px;border:1.5px solid var(--m
 .code{font-size:44px;font-weight:700;letter-spacing:.2em;text-align:center;margin:6px 0}
 .vs{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--mute);margin-bottom:10px}
 .vs b{color:var(--ink)}
+.hot{display:flex;flex-direction:column;gap:10px;min-height:calc(100vh - 40px)}
+.hs{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.hs.r{transform:rotate(180deg)}
+.hq{font-size:18px;margin-bottom:10px}
+.hs .opts{margin-bottom:0}
+.hs .opt{padding:14px 6px;font-size:17px}
+.hm{text-align:center;font-weight:700;font-size:14px}
+.opt.sel{border-color:#3a7bff;background:color-mix(in srgb,#3a7bff 18%,var(--card))}
+.opt.off{opacity:.55;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
 </head>
@@ -232,14 +241,9 @@ function result(){
   $("hm").onclick=home;
   if(bad.length)$("rp").onclick=function(){start(bad.map(function(x){return x.c}))};
 }
-var D=null;
-function getRoom(){try{return window.claude?window.claude.use("room"):Promise.resolve(null)}catch(e){return Promise.resolve(null)}}
-function duelBox(){return'<div class="sec"><h2>⚔️ Дуэль</h2><p class="note">Вдвоём на разных телефонах: одни и те же 10 вопросов. Побеждает тот, у кого больше верных ответов, при равенстве — кто быстрее.</p><button class="big" id="dnew">Создать дуэль</button><div class="fld" style="margin-top:14px"><label for="dcode">Или введите код друга</label><input id="dcode" maxlength="4" autocapitalize="characters" autocomplete="off" spellcheck="false"></div><button class="ghost" id="djoin">Войти по коду</button><div class="fix" id="derr"></div></div>'}
-function duelBind(){
-  function go(code){var e=$("derr");e.textContent="";getRoom().then(function(R){if(!R){e.textContent="Дуэль доступна только в claude.ai под вашим аккаунтом.";return}return R.join("duel-"+code.toLowerCase()).then(function(room){duelOpen(room,code)})}).catch(function(){e.textContent="Не удалось подключиться. Попробуйте ещё раз."})}
-  $("dnew").onclick=function(){var a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",c="";for(var i=0;i<4;i++)c+=a[Math.floor(Math.random()*a.length)];go(c)};
-  $("djoin").onclick=function(){var c=$("dcode").value.trim().toUpperCase();if(!/^[A-Z0-9]{4}$/.test(c)){$("derr").textContent="Код состоит из 4 символов";return}go(c)};
-}
+var L=null;
+function duelBox(){return'<div class="sec"><h2>⚔️ Дуэль</h2><p class="note">10 вопросов. Верный ответ — 1 очко, ещё 1 очко тому, кто ответил быстрее. Играйте прямо здесь, больше ничего не нужно.</p><button class="big" id="dbot">Против бота</button><button class="ghost" id="dhot" style="margin-top:10px">Вдвоём на одном телефоне</button></div>'}
+function duelBind(){$("dbot").onclick=function(){dStart("bot")};$("dhot").onclick=function(){dStart("hot")}}
 function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function mkQs(code){
   var h=0;for(var i=0;i<code.length;i++)h=(Math.imul(h,31)+code.charCodeAt(i))|0;
@@ -253,62 +257,48 @@ function mkQs(code){
     qs.push({c:c,k:k,ans:ans,o:o})
   });
   return qs}
-function duelOpen(room,code){
-  D={room:room,code:code,qs:mkQs(code),i:0,s:0,ms:0,ph:"lobby",rdy:false,lock:false,name:"",t0:0};
-  room.presence({n:"Игрок",rdy:false,i:0,s:0,ms:0,d:false}).catch(function(){});
-  D.off=room.onPeers(function(){dPeers()});
-  dLobby();
+function dStart(mode){
+  L={mode:mode,qs:mkQs(Math.random().toString(36).slice(2,8)),i:0,sc:[0,0],ans:[null,null],tm:[0,0],t0:0,bot:null,n:mode==="bot"?["Вы","Бот"]:["Игрок 1","Игрок 2"]};
+  dQ();
 }
-function dOpp(){var p=D.room.peers().filter(function(p){return!p.isMe&&p.kind==="viewer"&&p.presence&&typeof p.presence.n==="string"})[0];return p?p.presence:null}
-function dExit(){if(D){try{D.off&&D.off();D.room.leave()}catch(e){}D=null}home()}
-function dLobby(){
-  app.innerHTML='<div class="meta"><span>Дуэль</span><button class="link" id="ex">Выйти</button></div><div class="sec"><small>Код дуэли</small><div class="code">'+esc(D.code)+'</div><p class="note">Отправьте другу ссылку на эту страницу и код. Он вводит код на главной в блоке «Дуэль».</p><div class="fld"><label for="dn">Ваше имя</label><input id="dn" maxlength="16" value="'+esc(D.name)+'" placeholder="Игрок" autocomplete="off"></div><p class="note" id="dst"></p><button class="big" id="dr">Готов</button></div>';
-  $("ex").onclick=dExit;
-  $("dn").oninput=function(){D.name=this.value.trim().slice(0,16);D.room.presence({n:D.name||"Игрок"}).catch(function(){})};
-  $("dr").onclick=function(){D.rdy=!D.rdy;D.room.presence({rdy:D.rdy,n:D.name||"Игрок"}).catch(function(){});dPeers()};
-  dPeers();
-}
-function dPeers(){
-  if(!D)return;var o=dOpp();
-  if(D.ph==="lobby"){
-    var st=$("dst");if(!st)return;
-    st.textContent=o?("Соперник: "+o.n+(o.rdy===true?" — готов":" — ещё не готов")):"Ждём соперника…";
-    $("dr").textContent=D.rdy?"Отменить готовность":"Готов";$("dr").disabled=!o;
-    if(o&&o.rdy===true&&D.rdy)dCount();
-  }else if(D.ph==="play"){dStrip()}
-  else if(D.ph==="wait"){dEnd()}
-}
-function dCount(){
-  var d=D,n=3;d.ph="count";
-  app.innerHTML='<div class="sec"><div class="code" id="cn">3</div><p class="note" style="text-align:center">Приготовьтесь</p></div>';
-  var iv=setInterval(function(){if(D!==d){clearInterval(iv);return}n--;if(n<=0){clearInterval(iv);d.ph="play";dQ()}else $("cn").textContent=n},1000);
-}
+function dExit(){L=null;home()}
+function dLab(q){return q.k===2?"Past Simple":"Past Participle"}
+function dBtns(q,k){return q.o.map(function(x,j){return'<button class="opt" data-k="'+k+'" data-j="'+j+'">'+esc(x)+'</button>'}).join("")}
+function dSide(k,q){
+  return'<div class="hs'+(k?' r':'')+'" id="h'+k+'"><div class="hq"><small>'+esc(L.n[k])+'</small><br><b>'+esc(q.c.t)+'</b> · '+dLab(q)+' · '+esc(q.c.r)+'</div><div class="opts">'+dBtns(q,k)+'</div></div>'}
 function dQ(){
-  var q=D.qs[D.i],lab=q.k===2?"Past Simple":"Past Participle";
-  D.lock=false;D.t0=Date.now();
-  app.innerHTML='<div class="meta"><span>Вопрос '+(D.i+1)+' из '+D.qs.length+'</span><button class="link" id="ex">Выйти</button></div><div class="vs" id="vs"></div><div class="paper">'+pic(q.c)+'<div class="inf">'+esc(q.c.t)+'</div><div class="sub">'+lab+'</div><div class="sub">'+esc(q.c.r)+'</div></div><div class="opts">'+q.o.map(function(x,k){return'<button class="opt" data-k="'+k+'">'+esc(x)+'</button>'}).join("")+'</div>';
-  $("ex").onclick=dExit;dStrip();
-  app.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){dAns(b,q)}});
+  var q=L.qs[L.i];L.ans=[null,null];L.bot=null;L.t0=Date.now();
+  if(L.mode==="bot"){
+    app.innerHTML='<div class="meta"><span>Вопрос '+(L.i+1)+' из '+L.qs.length+'</span><button class="link" id="ex">Выйти</button></div><div class="vs"><span><b>Вы</b>: '+L.sc[0]+'</span><span><b>Бот</b>: '+L.sc[1]+'</span></div><div class="paper">'+pic(q.c)+'<div class="inf">'+esc(q.c.t)+'</div><div class="sub">'+dLab(q)+'</div><div class="sub">'+esc(q.c.r)+'</div></div><div class="opts">'+dBtns(q,0)+'</div><p class="note" id="hm" style="text-align:center">Бот думает…</p>';
+  }else{
+    app.innerHTML='<div class="hot">'+dSide(1,q)+'<div class="hm"><span id="hm">Вопрос '+(L.i+1)+' из '+L.qs.length+' · счёт '+L.sc[1]+' — '+L.sc[0]+'</span> <button class="link" id="ex">Выйти</button></div>'+dSide(0,q)+'</div>';
+  }
+  $("ex").onclick=dExit;
+  app.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){dTap(+b.dataset.k,+b.dataset.j,b,q)}});
   window.scrollTo(0,0);
 }
-function dAns(b,q){
-  if(D.lock)return;D.lock=true;var d=D;
-  var ok=q.o[+b.dataset.k]===q.ans;
-  d.ms+=Date.now()-d.t0;if(ok)d.s++;d.i++;
-  app.querySelectorAll(".opt").forEach(function(x){if(q.o[+x.dataset.k]===q.ans)x.classList.add("ok")});
-  if(!ok)b.classList.add("bad");
-  var done=d.i>=d.qs.length;
-  d.room.presence({i:d.i,s:d.s,ms:d.ms,d:done}).catch(function(){});
-  dStrip();
-  setTimeout(function(){if(D!==d)return;if(done){d.ph="wait";dEnd()}else dQ()},900);
+function dTap(k,j,b,q){
+  if(!L||L.ans[k]!==null)return;
+  L.ans[k]=j;L.tm[k]=Date.now()-L.t0;
+  var root=L.mode==="bot"?app:$("h"+k);
+  root.querySelectorAll(".opt").forEach(function(x){x.classList.add("off")});
+  b.classList.remove("off");b.classList.add("sel");
+  if(L.mode==="bot"){L.ans[1]=-1;L.bot={ok:Math.random()<.75,t:2000+Math.random()*4500}}
+  if(L.ans[0]!==null&&L.ans[1]!==null)dReveal(q,L);
 }
-function dStrip(){var e=$("vs");if(!e)return;var o=dOpp();
-  e.innerHTML='<span><b>Вы</b>: верно '+D.s+'</span><span>'+(o?'<b>'+esc(o.n)+'</b>: '+(o.i|0)+'/'+D.qs.length+', верно '+(o.s|0):'Соперник отключился')+'</span>'}
+function dReveal(q,d){
+  var bot=L.mode==="bot",ok=[q.o[L.ans[0]]===q.ans,bot?L.bot.ok:q.o[L.ans[1]]===q.ans],t=[L.tm[0],bot?L.bot.t:L.tm[1]],p=[ok[0]?1:0,ok[1]?1:0];
+  if(ok[0]&&ok[1]){if(t[0]<t[1])p[0]++;else if(t[1]<t[0])p[1]++}
+  L.sc[0]+=p[0];L.sc[1]+=p[1];
+  app.querySelectorAll(".opt").forEach(function(x){x.classList.remove("off","sel");var k=+x.dataset.k,j=+x.dataset.j;if(q.o[j]===q.ans)x.classList.add("ok");else if(L.ans[k]===j)x.classList.add("bad")});
+  var m=$("hm");if(m)m.textContent=bot?("Бот: "+(ok[1]?"верно":"неверно")+" за "+(t[1]/1000).toFixed(1)+" с · вам +"+p[0]+", боту +"+p[1]):("Счёт: "+L.sc[1]+" — "+L.sc[0]);
+  setTimeout(function(){if(L!==d)return;L.i++;L.i>=L.qs.length?dEnd():dQ()},1500);
+}
 function dEnd(){
-  var o=dOpp(),fin=!!o&&o.d===true,h="";
-  if(fin){var os=o.s|0,om=o.ms|0;h=(D.s>os||(D.s===os&&D.ms<om))?"Вы победили! 🏆":((D.s===os&&D.ms===om)?"Ничья":"Победил соперник")}
-  app.innerHTML='<h1>Дуэль завершена</h1><div class="sec">'+(fin?'<h2>'+h+'</h2>':'<p class="note">'+(o?'Ждём, пока соперник закончит ('+(o.i|0)+'/'+D.qs.length+')…':'Соперник отключился')+'</p>')+'<p><b>Вы</b>: верно '+D.s+' из '+D.qs.length+', время '+(D.ms/1000).toFixed(1)+' с</p>'+(o?'<p><b>'+esc(o.n)+'</b>: верно '+(o.s|0)+' из '+D.qs.length+(fin?', время '+((o.ms|0)/1000).toFixed(1)+' с':'')+'</p>':'')+'</div><button class="big" id="hm">На главную</button>';
-  $("hm").onclick=dExit;
+  var a=L.sc[0],b=L.sc[1],bot=L.mode==="bot",m=L.mode,h=a===b?"Ничья":(a>b?(bot?"Вы победили! 🏆":"Победил Игрок 1 🏆"):(bot?"Победил бот":"Победил Игрок 2 🏆"));
+  app.innerHTML='<h1>Дуэль завершена</h1><div class="sec"><h2>'+h+'</h2><p><b>'+esc(L.n[0])+'</b>: '+a+' очк.</p><p><b>'+esc(L.n[1])+'</b>: '+b+' очк.</p></div><button class="big" id="ag" style="margin-bottom:10px">Ещё раз</button><button class="ghost" id="hm2">На главную</button>';
+  $("ag").onclick=function(){dStart(m)};$("hm2").onclick=dExit;
+  window.scrollTo(0,0);
 }
 home();
 </script>
